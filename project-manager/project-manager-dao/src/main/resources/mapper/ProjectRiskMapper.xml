@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hgt.project.dao.mapper.ProjectRiskMapper">
+    <select id="findProjectNumberById" parameterType="collection" resultType="Map">
+        select project_number as proNum,count(project_number) as proNum_count from project_risk where id in
+        <foreach collection="collection" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+        group by project_number
+    </select>
+
+    <select id="sumRisk" parameterType="String" resultType="Map">
+        select project_number as proNum,count(project_number) proNum_count from project_risk where project_number=#{pNum} group by project_number
+    </select>
+
+    <update id="updateRiskCount" parameterType="Map" >
+        update project set risk_count = risk_count - #{proNum_count}
+        where project_number = #{proNum}
+    </update>
+</mapper>

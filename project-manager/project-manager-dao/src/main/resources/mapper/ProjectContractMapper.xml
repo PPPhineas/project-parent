@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hgt.project.dao.mapper.ProjectContractMapper">
+	
+	<resultMap id="projectContractResultMap" type="com.hgt.project.dao.entity.vo.ProjectContractVo">
+		<result column="contract_amount" property="contract.contractAmount"/>
+		<result column="contract_count" property="contract.contractCount"/>
+		<result column="contract_name" property="contract.contractName"/>
+		<result column="contract_number" property="contract.contractNumber"/>
+		<result column="contract_object" property="contract.contractObject"/>
+		<result column="contract_status" property="contract.contractStatus"/>
+		<result column="contract_type" property="contract.contractType"/>
+		<result column="create_time" property="contract.contractAmount"/>
+		<result column="deleted" property="contract.contractAmount"/>
+		<result column="department_code" property="contract.contractAmount"/>
+		<result column="id" property="contract.contractAmount"/>
+		<result column="is_check_file" property="contract.contractAmount"/>
+		<result column="is_original" property="contract.contractAmount"/>
+		<result column="is_quality_report" property="contract.contractAmount"/>
+		<result column="receive_time" property="contract.contractAmount"/>
+		<result column="remark" property="contract.contractAmount"/>
+		<result column="sign_time" property="contract.contractAmount"/>
+		<result column="unit" property="contract.contractAmount"/>
+		<result column="update_time" property="contract.contractAmount"/>
+		
+		<result column="pc_completed_time" property="pc.completedTime"/>
+		<result column="pc_contract_number" property="pc.contractNumber"/>
+		<result column="pc_contract_status" property="pc.contractStatus"/>
+		<result column="pc_create_time" property="pc.createTime"/>
+		<result column="pc_deleted" property="pc.deleted"/>
+		<result column="pc_id" property="pc.id"/>
+		<result column="pc_invoice_amount" property="pc.invoiceAmount"/>
+		<result column="pc_pending_amount" property="pc.pendingAmount"/>
+		<result column="pc_project_number" property="pc.projectNumber"/>
+		<result column="pc_remark" property="pc.remark"/>
+		<result column="pc_returned_amount" property="pc.returnedAmount"/>
+		<result column="pc_update_time" property="pc.updateTime"/>
+		<association property="payDetails" select="selectContractPayDetails" column="pc_contract_number"></association>
+	</resultMap>
+	
+	<select id="pageProjectContract" resultMap="projectContractResultMap">
+		SELECT
+			c.contract_amount,
+			c.contract_count,
+			c.contract_name,
+			c.contract_number,
+			c.contract_object,
+			c.contract_status,
+			c.contract_type,
+			c.create_time,
+			c.deleted,
+			c.department_code,
+			c.id,
+			c.is_check_file,
+			c.is_original,
+			c.is_quality_report,
+			c.receive_time,
+			c.remark,
+			c.sign_time,
+			c.unit,
+			c.update_time,
+			pc.completed_time as pc_completed_time,
+			pc.contract_number as pc_contract_number,
+			pc.contract_status as pc_contract_status,
+			pc.create_time as pc_create_time,
+			pc.deleted as pc_deleted,
+			pc.id as pc_id,
+			pc.invoice_amount as pc_invoice_amount,
+			pc.pending_amount as pc_pending_amount,
+			pc.project_number as pc_project_number,
+			pc.remark as pc_remark,
+			pc.returned_amount as pc_returned_amount,
+			pc.update_time as pc_update_time
+		FROM
+			project_contract pc
+			INNER JOIN contract c ON pc.contract_number = c.contract_number
+		${ew.customSqlSegment}
+	</select>
+	
+	<select id="selectContractPayDetails" resultType="com.hgt.project.dao.entity.PaymentCollectionDetails">
+		SELECT
+			d.contract_number as contractNumber,
+			d.id,
+			d.fund_amount as fundAmount,
+			d.fund_time as fundTime,
+			d.fund_type as fundType,
+			d.create_time as createTime,
+			d.create_user as createUser,
+			d.deleted,
+			d.update_time as updateTime,
+			d.update_user as updateUser
+		FROM
+			payment_collection_details d 
+		WHERE
+			d.contract_number = #{contractNumber}
+	</select>
+	
+	<select id="listProjectContract" resultMap="projectContractResultMap">
+		SELECT
+			c.contract_amount,
+			c.contract_count,
+			c.contract_name,
+			c.contract_number,
+			c.contract_object,
+			c.contract_status,
+			c.contract_type,
+			c.create_time,
+			c.deleted,
+			c.department_code,
+			c.id,
+			c.is_check_file,
+			c.is_original,
+			c.is_quality_report,
+			c.receive_time,
+			c.remark,
+			c.sign_time,
+			c.unit,
+			c.update_time,
+			pc.completed_time as pc_completed_time,
+			pc.contract_number as pc_contract_number,
+			pc.contract_status as pc_contract_status,
+			pc.create_time as pc_create_time,
+			pc.deleted as pc_deleted,
+			pc.id as pc_id,
+			pc.invoice_amount as pc_invoice_amount,
+			pc.pending_amount as pc_pending_amount,
+			pc.project_number as pc_project_number,
+			pc.remark as pc_remark,
+			pc.returned_amount as pc_returned_amount,
+			pc.update_time as pc_update_time
+		FROM
+			project_contract pc
+			INNER JOIN contract c ON pc.contract_number = c.contract_number
+		${ew.customSqlSegment}
+	</select>
+	
+	<update id="updateAmountByContractNumber">
+		update project_contract
+		set returned_amount = returned_amount + #{fundAmount},
+		pending_amount = pending_amount - #{fundAmount},
+		update_time = now()
+		where contract_number = #{contractNumber}
+	</update>
+</mapper>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hgt.project.dao.mapper.ProjectIssueMapper">
+    <select id="queryProjectIssueCount" parameterType="Collection" resultType="Map">
+        select project_number as projectNumber, count(project_number) as issueCount from project_issue
+        where id in
+            <foreach collection="collection" open="(" close=")" separator="," item="pId">
+            #{pId}
+            </foreach>
+        group by project_number
+    </select>
+
+    <select id="sumIssue" parameterType="String" resultType="Map">
+        select project_number as projectNumber,count(project_number) issueCount from project_issue where project_number=#{pNum} group by project_number
+    </select>
+    
+    <update id="updateProjectIssueCount" parameterType="Map">
+          update project set issue_count=issue_count-#{issueCount}
+          where project_number = #{projectNumber}
+    </update>
+</mapper>

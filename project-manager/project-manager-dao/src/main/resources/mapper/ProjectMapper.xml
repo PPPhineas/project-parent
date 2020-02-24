@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hgt.project.dao.mapper.ProjectMapper">
+    <update id="icsCount" parameterType="String">
+        update project set ${field}=${field} + 1 where project_number=#{pNum}
+    </update>
+    <select id="whetherExists" parameterType="String" resultType="String">
+        select project_number from project where project_number=#{pNum}
+    </select>
+</mapper>
